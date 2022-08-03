@@ -2,9 +2,12 @@ package me.jihye.leanjwt.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import me.jihye.leanjwt.entity.Users;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -25,4 +28,18 @@ public class UserDto {
     @NotNull
     @Size(min = 3, max = 50)
     private String nickname;
+
+    private Set<AuthorityDto> authorityDtoSet;
+
+    public static UserDto from(Users user) {
+        if(user == null) return null;
+
+        return UserDto.builder()
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .authorityDtoSet(user.getAuthorities().stream()
+                        .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
+                        .collect(Collectors.toSet()))
+                .build();
+    }
 }
